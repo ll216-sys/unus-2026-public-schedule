@@ -772,11 +772,16 @@ function loadCover(){return new Promise(res=>{if(coverImg)return res(coverImg);c
 function withTimeout(p,ms){return Promise.race([p,new Promise(r=>setTimeout(r,ms))])}
 async function loadFonts(text){
   if(!document.fonts||!document.fonts.load)return;
-  if(document.fonts&&document.fonts.load){document.fonts.load('700 20px "Shippori Mincho B1"',COPYRIGHT);document.fonts.load('700 30px "Saira Condensed"','GUEISEAN KOAuZTINC.Y')}
-  const SENT='今年U:NUS總共場活動有你的參與。0123456789大眼漂浮電波嗶尖叫跳星人';
-  document.fonts.load('800 60px "Shippori Mincho B1"',SENT);document.fonts.load('700 60px "Shippori Mincho B1"',SENT);document.fonts.load('700 100px "Saira Condensed"','0123456789');
-  const jobs=['900 100px Unbounded','400 30px "Jersey 10"','900 80px "Noto Sans TC"','700 30px "Noto Sans TC"'].map(f=>document.fonts.load(f,f.includes('Noto')?text:'0123456789 /ABCDEFGHIJKLMNOPQRSTUVWXYZ'));
-  await withTimeout(Promise.all(jobs).catch(()=>{}),3500);
+  const SENT='今年U:NUS總共場活動有你的參與。0123456789大眼漂浮電波嗶尖叫跳星人場';
+  const LAT='0123456789 /ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  /* 全部都要等載入完才畫圖；沒等的話，手機第一次連線慢時稱號會退成別的字型 */
+  const jobs=[
+    ['800 60px "Shippori Mincho B1"',SENT],['700 60px "Shippori Mincho B1"',SENT+text],['700 20px "Shippori Mincho B1"',COPYRIGHT],
+    ['700 100px "Saira Condensed"',LAT+'OF'],['700 30px "Saira Condensed"','GUEISEAN KOAuZTINC.Y'],
+    ['900 100px Unbounded',LAT],['400 30px "Jersey 10"',LAT],
+    ['900 80px "Noto Sans TC"',text],['700 30px "Noto Sans TC"',text],['500 20px "Noto Sans TC"','高胥崴高有翔吳昱廷蔡承祐共場']
+  ].map(([f,t])=>document.fonts.load(f,t).catch(()=>{}));
+  await withTimeout(Promise.all(jobs),7000);
 }
 const T=THEME==='dark'
   ?{bg:'#0E1015',chk:'#151820',ink:'#F2F3F7',sub:'#9AA0AD',ring:'#F2F3F7',panel:'#050608',panelStroke:'#2B2E39',shadow:'rgba(0,0,0,.6)'}
@@ -823,7 +828,7 @@ function drawRankBlock(g,x,y,w,h,R){
   g.fillStyle=RS.en;g.fillText(R.en,tx,iy+Math.round(ih*.96));ls(0);
   g.restore();
 }
-/* 年度總表的稱號：無底框，杏橘字＋黑邊＋掃描線＋大範圍橘色 LED 光暈，直接站在格紋上 */
+/* 年度總表的稱號：無底框，星球色字＋同色系深邊（細）＋同色光暈，直接站在格紋上 */
 function drawRankLED(g,x,y,w,h,R){
   const T=rkTheme(R);
   g.save();g.textAlign='left';g.lineJoin='round';
@@ -832,15 +837,11 @@ function drawRankLED(g,x,y,w,h,R){
   let ts=Math.round(h*.6);
   const setN=()=>{g.font=`800 ${ts}px "Shippori Mincho B1","Noto Serif TC","Noto Sans TC",serif`;ls(ts*.04)};
   setN();while(g.measureText(R.name).width>w-14&&ts>20){ts-=2;setN()}
-  const by=y+Math.round(h*.80);
-  g.strokeStyle='#0D0E12';g.lineWidth=12;g.shadowColor=T.led;g.shadowBlur=55;
-  for(let i=0;i<3;i++)g.strokeText(R.name,x,by);
+  const by=y+Math.round(h*.80),dark=rkMix(R.c,[0,0,0],.5);
+  g.shadowColor=T.gc;g.shadowBlur=36;g.strokeStyle=dark;g.lineWidth=5;
+  for(let i=0;i<2;i++)g.strokeText(R.name,x,by);
   g.shadowBlur=0;g.strokeText(R.name,x,by);
-  const oc=document.createElement('canvas');oc.width=g.canvas.width;oc.height=g.canvas.height;const o=oc.getContext('2d');
-  o.font=g.font;if('letterSpacing' in o)o.letterSpacing=g.letterSpacing;o.fillStyle=T.ink;o.fillText(R.name,x,by);
-  o.globalCompositeOperation='source-atop';o.fillStyle=T.shade;
-  for(let yy=y;yy<y+h+40;yy+=5)o.fillRect(x-20,yy,w+40,1.8);
-  g.shadowColor=T.gc;g.shadowBlur=26;g.drawImage(oc,0,0);g.shadowBlur=0;ls(0);
+  g.fillStyle=R.c;g.fillText(R.name,x,by);ls(0);
   const es=Math.round(h*.14);g.font=`700 ${es}px "Saira Condensed","Arial Narrow",sans-serif`;ls(es*.35);
   g.shadowColor=T.ledEn;g.shadowBlur=10;g.fillStyle=T.deep;g.fillText(R.en,x+6,y+h+es*.2);g.shadowBlur=0;ls(0);
   g.restore();
@@ -940,8 +941,8 @@ const FS8=s=>`800 ${s}px "Shippori Mincho B1", "Noto Serif TC", "Noto Sans TC", 
 const SOLO_P=60, SOLO_MINH=566;
 const YW=1080, YH=1920, YM=54, YGAP=36, YCW=(YW-2*YM-YGAP)/2;
 const recTag=e=>{const m=e.title.match(/\*錄影(\d+)$/);return m?m[1]:''};
-const baseTitle=e=>e.title.replace(/\*錄影\d+$/,'').replace(/\(原\d+\/\d+\)$/,'');
-const moved=e=>{const m=e.title.match(/\(原(\d+\/\d+)\)$/);return m?m[1]:''};
+const baseTitle=e=>e.title.replace(/\*錄影\d+$/,'').replace(/\((?:原|\*)\d+\/\d+\)$/,'');
+const moved=e=>{const m=e.title.match(/\((?:原|\*)(\d+\/\d+)\)$/);return m?m[1]:''};
 const dateTxt=e=>(e.d2?e.m+'/'+e.d+'–'+e.d2:e.m+'/'+e.d)+(recTag(e)?'*'+recTag(e):'')+(moved(e)?'(原'+moved(e)+')':'');
 function chipW(g,txt,fs){g.font=FP(fs);return Math.ceil(g.measureText(txt).width+fs*.9)}
 function drawChip(g,x,y,w,h,txt,fs,on,off){
@@ -1601,6 +1602,7 @@ $('#btn-reset').addEventListener('click',()=>{
   document.querySelectorAll('#row-mem .tab').forEach((x,i)=>x.setAttribute('aria-pressed',i===0));
   window._card=null;window._year=null;window._years=[];window._yearTags=[];show('s-welcome');
 });
+try{loadFonts(EV.map(e=>e.title).join(''))}catch(_){}
 </script>
 </body>
 </html>
