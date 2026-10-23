@@ -518,13 +518,13 @@ const RAW=[
 [56,'10/21','台中','中台科大 向陽音浪青春狂響','蔡承祐','個人'],
 [74,'10/22','新北','辭修高中校慶演唱會','高有翔 吳昱廷 蔡承祐','團體'],
 [57,'10/25','花蓮','農好生活節','高有翔 吳昱廷 蔡承祐','團體'],
-[58,'10/24','台北','《Crash, Boom Boom Love!》音樂劇','高胥崴','個人'],
+[58,'11/1','台北','《Crash, Boom Boom Love!》音樂劇','高胥崴','個人'],
 [59,'10/25','台北','《Crash, Boom Boom Love!》音樂劇','高胥崴','個人'],
 [60,'10/30','台北','《Crash, Boom Boom Love!》音樂劇','高胥崴','個人'],
 [61,'10/31','台北','《Crash, Boom Boom Love!》音樂劇*錄影1','高胥崴','個人'],
 [62,'10/31','台北','《Crash, Boom Boom Love!》音樂劇*錄影2','高胥崴','個人'],
 [63,'10/31','台南','港明高中校慶','蔡承祐','個人'],
-[64,'11/1','台北','《Crash, Boom Boom Love!》音樂劇','高胥崴','個人'],
+[64,'11/1','台北','《Crash, Boom Boom Love!》音樂劇(原10/24)','高胥崴','個人'],
 [65,'11/1','花蓮','穀動日不落 曬秋音樂祭','高有翔 吳昱廷 蔡承祐','團體'],
 [66,'11/8','屏東','狂客音樂祭','','團體'],
 [72,'11/11','高雄','中山校慶|屬於我們的46Hz','吳昱廷','個人'],
@@ -940,8 +940,9 @@ const FS8=s=>`800 ${s}px "Shippori Mincho B1", "Noto Serif TC", "Noto Sans TC", 
 const SOLO_P=60, SOLO_MINH=566;
 const YW=1080, YH=1920, YM=54, YGAP=36, YCW=(YW-2*YM-YGAP)/2;
 const recTag=e=>{const m=e.title.match(/\*錄影(\d+)$/);return m?m[1]:''};
-const baseTitle=e=>e.title.replace(/\*錄影\d+$/,'');
-const dateTxt=e=>(e.d2?e.m+'/'+e.d+'–'+e.d2:e.m+'/'+e.d)+(recTag(e)?'*'+recTag(e):'');
+const baseTitle=e=>e.title.replace(/\*錄影\d+$/,'').replace(/\(原\d+\/\d+\)$/,'');
+const moved=e=>{const m=e.title.match(/\(原(\d+\/\d+)\)$/);return m?m[1]:''};
+const dateTxt=e=>(e.d2?e.m+'/'+e.d+'–'+e.d2:e.m+'/'+e.d)+(recTag(e)?'*'+recTag(e):'')+(moved(e)?'(原'+moved(e)+')':'');
 function chipW(g,txt,fs){g.font=FP(fs);return Math.ceil(g.measureText(txt).width+fs*.9)}
 function drawChip(g,x,y,w,h,txt,fs,on,off){
   g.save();rr(g,x,y,w,h,h*.28);
