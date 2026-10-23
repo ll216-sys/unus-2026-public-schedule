@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>U:NUS 2026 年度活動</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;900&family=Jersey+10&family=DotGothic16&family=Saira+Condensed:wght@600;700&family=Shippori+Mincho+B1:wght@500;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;900&family=Jersey+10&family=DotGothic16&family=Saira+Condensed:wght@600;700&family=Shippori+Mincho+B1:wght@500;700;800&family=Noto+Serif+TC:wght@700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
 <style>
 /* Concept: 銀色格紋底、黑色陀螺面板、電子寵物 LCD。四位成員的藍黃紅綠是唯一的彩色語彙。 */
 :root{
@@ -524,7 +524,7 @@ const RAW=[
 [61,'10/31','台北','《Crash, Boom Boom Love!》音樂劇*錄影1','高胥崴','個人'],
 [62,'10/31','台北','《Crash, Boom Boom Love!》音樂劇*錄影2','高胥崴','個人'],
 [63,'10/31','台南','港明高中校慶','蔡承祐','個人'],
-[64,'11/1','台北','《Crash, Boom Boom Love!》音樂劇(原10/24)','高胥崴','個人'],
+[64,'11/1','台北','《Crash, Boom Boom Love!》音樂劇(*10/24)','高胥崴','個人'],
 [65,'11/1','花蓮','穀動日不落 曬秋音樂祭','高有翔 吳昱廷 蔡承祐','團體'],
 [66,'11/8','屏東','狂客音樂祭','','團體'],
 [72,'11/11','高雄','中山校慶|屬於我們的46Hz','吳昱廷','個人'],
@@ -716,7 +716,7 @@ function renderStats(st){
   $('#h-l3').textContent='有你的參與。';
   $('#h-n').textContent=String(st.n);
   $('#rk-pct').textContent=Math.round(rankScore()*100)+'%';
-  $('#rk-name').textContent=R.name;$('#rk-en').textContent=R.en;$('#rk-line').textContent=R.line;
+  $('#rk-name').textContent=R.name;$('#rk-en').textContent=R.en;$('#rk-line').textContent=R.line;try{document.fonts.load('700 16px "Shippori Mincho B1"',R.line);document.fonts.load('700 16px "Noto Serif TC"',R.line);document.fonts.load('800 40px "Shippori Mincho B1"',R.name)}catch(_){}
   const box=$('#stats');box.textContent='';
   /* 三格小統計 */
   const tiles=el('div','tiles3');
@@ -772,11 +772,11 @@ function loadCover(){return new Promise(res=>{if(coverImg)return res(coverImg);c
 function withTimeout(p,ms){return Promise.race([p,new Promise(r=>setTimeout(r,ms))])}
 async function loadFonts(text){
   if(!document.fonts||!document.fonts.load)return;
-  const SENT='今年U:NUS總共場活動有你的參與。0123456789大眼漂浮電波嗶尖叫跳星人場';
+  const SENT='今年U:NUS總共場活動有你的參與。0123456789大眼漂浮電波嗶尖叫跳星人場'+RANKS.map(r=>r.name+r.line).join('');
   const LAT='0123456789 /ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   /* 全部都要等載入完才畫圖；沒等的話，手機第一次連線慢時稱號會退成別的字型 */
   const jobs=[
-    ['800 60px "Shippori Mincho B1"',SENT],['700 60px "Shippori Mincho B1"',SENT+text],['700 20px "Shippori Mincho B1"',COPYRIGHT],
+    ['800 60px "Shippori Mincho B1"',SENT],['700 60px "Shippori Mincho B1"',SENT+text],['700 20px "Shippori Mincho B1"',COPYRIGHT],['700 20px "Noto Serif TC"','值趴'],
     ['700 100px "Saira Condensed"',LAT+'OF'],['700 30px "Saira Condensed"','GUEISEAN KOAuZTINC.Y'],
     ['900 100px Unbounded',LAT],['400 30px "Jersey 10"',LAT],
     ['900 80px "Noto Sans TC"',text],['700 30px "Noto Sans TC"',text],['500 20px "Noto Sans TC"','高胥崴高有翔吳昱廷蔡承祐共場']
@@ -943,7 +943,7 @@ const YW=1080, YH=1920, YM=54, YGAP=36, YCW=(YW-2*YM-YGAP)/2;
 const recTag=e=>{const m=e.title.match(/\*錄影(\d+)$/);return m?m[1]:''};
 const baseTitle=e=>e.title.replace(/\*錄影\d+$/,'').replace(/\((?:原|\*)\d+\/\d+\)$/,'');
 const moved=e=>{const m=e.title.match(/\((?:原|\*)(\d+\/\d+)\)$/);return m?m[1]:''};
-const dateTxt=e=>(e.d2?e.m+'/'+e.d+'–'+e.d2:e.m+'/'+e.d)+(recTag(e)?'*'+recTag(e):'')+(moved(e)?'(原'+moved(e)+')':'');
+const dateTxt=e=>(e.d2?e.m+'/'+e.d+'–'+e.d2:e.m+'/'+e.d)+(recTag(e)?'*'+recTag(e):'')+(moved(e)?'(*'+moved(e)+')':'');
 function chipW(g,txt,fs){g.font=FP(fs);return Math.ceil(g.measureText(txt).width+fs*.9)}
 function drawChip(g,x,y,w,h,txt,fs,on,off){
   g.save();rr(g,x,y,w,h,h*.28);
