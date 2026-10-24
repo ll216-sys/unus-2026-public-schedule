@@ -236,6 +236,8 @@ h1{margin:0;font:900 clamp(1.9rem,8.2vw,3rem)/1.18 var(--f-display);letter-spaci
 #s-all .all{max-width:440px;margin-inline:auto;display:grid;gap:14px}#s-all .yr{margin-top:0}
 .yr img:not([src]){display:none}
 .yr img{display:block;width:100%;height:auto;margin-top:10px;border:3px solid var(--ink);border-radius:14px;background:var(--paper)}
+#asset-note{position:fixed;left:50%;top:64px;transform:translateX(-50%);z-index:99;max-width:min(92vw,520px);padding:12px 16px;border:3px solid var(--ink);border-radius:14px;background:var(--paper);color:var(--ink);box-shadow:0 5px 0 var(--ink);font:700 .95rem/1.5 "Noto Sans TC",sans-serif;text-align:center}
+#asset-note[hidden]{display:none}
 .toast{margin:4px 0 0;min-height:1.5em;font:400 1.05rem var(--f-pixel);letter-spacing:.14em;color:var(--muted)}
 .stats{display:grid;gap:18px}
 .tiles3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
@@ -768,20 +770,45 @@ function renderStats(st){
 
 /* ---------- share card (canvas) ---------- */
 let coverImg=null;
-function loadCover(){return new Promise(res=>{if(coverImg)return res(coverImg);const i=new Image();i.onload=()=>{coverImg=i;res(i)};i.onerror=()=>res(null);i.src=COVER})}
+class AssetError extends Error{}
+const FONT_FAIL_MSG='字型還沒載完（可能是網路較慢），請稍後再按一次；如果一直失敗，請重新整理頁面。';
+const COVER_FAIL_MSG='封面圖載入失敗，請重新整理頁面後再試一次。';
+/* 封面圖：失敗會重試一次，還是失敗就丟出 AssetError（由呼叫端提示使用者，不再默默畫出沒有封面的圖） */
+async function loadCover(){
+  if(coverImg)return coverImg;
+  for(let k=0;k<2;k++){
+    const i=await new Promise(res=>{const im=new Image();im.onload=()=>res(im.naturalWidth?im:null);im.onerror=()=>res(null);im.src=COVER});
+    if(i){coverImg=i;return i}
+  }
+  throw new AssetError(COVER_FAIL_MSG);
+}
 function withTimeout(p,ms){return Promise.race([p,new Promise(r=>setTimeout(r,ms))])}
+/* 畫面上方的提示條（歡迎頁、行事曆、結果頁都看得到） */
+function notice(t){
+  let n=document.getElementById('asset-note');
+  if(!n){n=document.createElement('div');n.id='asset-note';n.setAttribute('role','alert');document.body.appendChild(n)}
+  n.textContent=t;n.hidden=false;clearTimeout(notice._t);notice._t=setTimeout(()=>{n.hidden=true},9000);
+}
+const assetMsg=err=>err instanceof AssetError?err.message:'圖片產生失敗，請重新整理頁面後再試一次。';
+/* 畫圖前要確認「每一種字型＋要用到的字」都真的載入完成：先等最多 10 秒，還沒好再等 8 秒；
+   還是沒好就丟出 AssetError，不再用備用字型硬畫（手機第一次連線慢時，稱號字型才不會跑掉） */
 async function loadFonts(text){
   if(!document.fonts||!document.fonts.load)return;
   const SENT='今年U:NUS總共場活動有你的參與。0123456789大眼漂浮電波嗶尖叫跳星人場'+RANKS.map(r=>r.name+r.line).join('');
   const LAT='0123456789 /ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  /* 全部都要等載入完才畫圖；沒等的話，手機第一次連線慢時稱號會退成別的字型 */
-  const jobs=[
-    ['800 60px "Shippori Mincho B1"',SENT],['700 60px "Shippori Mincho B1"',SENT+text],['700 20px "Shippori Mincho B1"',COPYRIGHT],['700 20px "Noto Serif TC"','值趴'],
+  const NAMES='高胥崴吳昱廷蔡承祐AK嘻哈小分隊 GueiAuZTINC.Y';
+  const specs=[
+    ['800 60px "Shippori Mincho B1"',SENT],['800 92px "Shippori Mincho B1"',NAMES],['700 60px "Shippori Mincho B1"',SENT+text],['700 20px "Shippori Mincho B1"',COPYRIGHT],['700 20px "Noto Serif TC"','值趴'],
     ['700 100px "Saira Condensed"',LAT+'OF'],['700 30px "Saira Condensed"','GUEISEAN KOAuZTINC.Y'],
     ['900 100px Unbounded',LAT],['400 30px "Jersey 10"',LAT],
-    ['900 80px "Noto Sans TC"',text],['700 30px "Noto Sans TC"',text],['500 20px "Noto Sans TC"','高胥崴高有翔吳昱廷蔡承祐共場']
-  ].map(([f,t])=>document.fonts.load(f,t).catch(()=>{}));
-  await withTimeout(Promise.all(jobs),7000);
+    ['900 80px "Noto Sans TC"',text],['700 30px "Noto Sans TC"',text],['500 22px "Noto Sans TC"',text+'高胥崴高有翔吳昱廷蔡承祐共場']
+  ];
+  const missing=()=>specs.filter(([f,t])=>{try{return !document.fonts.check(f,t)}catch(_){return false}});
+  for(let k=0;k<2;k++){
+    await withTimeout(Promise.all(specs.map(([f,t])=>document.fonts.load(f,t).catch(()=>{}))),k?8000:10000);
+    if(!missing().length)return;
+  }
+  throw new AssetError(FONT_FAIL_MSG);
 }
 const T=THEME==='dark'
   ?{bg:'#0E1015',chk:'#151820',ink:'#F2F3F7',sub:'#9AA0AD',ring:'#F2F3F7',panel:'#050608',panelStroke:'#2B2E39',shadow:'rgba(0,0,0,.6)'}
@@ -1189,9 +1216,6 @@ async function drawYear(solo=null){
   const st=solo?Object.assign(computeStats(),{n:solo.n}):computeStats();
   const txt=[...EV,EGG].map(e=>e.title.normalize('NFKC')+e.loc+e.members.join('')).join('')+state.name+'的全年場次總覽到場未到今年總共活動有你的參與。參加共場依日期排序團體小分隊個人行程全員粉絲非官方製作未標色塊';
   await loadFonts(txt+'0123456789AK嘻哈小分隊個人演出任務GueiAuZTINSeanKoC.Y');
-  if(document.fonts&&document.fonts.load){
-    await withTimeout(Promise.all([document.fonts.load('800 92px "Shippori Mincho B1"','高胥崴吳昱廷蔡承祐AK嘻哈小分隊 GueiAuZTINC.Y'),document.fonts.load('700 30px "Shippori Mincho B1"',txt),document.fonts.load('500 22px "Noto Sans TC"',txt),document.fonts.load('700 20px "Shippori Mincho B1"',COPYRIGHT),document.fonts.load('700 30px "Saira Condensed"','GUEISEAN KOAuZTINC.Y')]).catch(()=>{}),3500);
-  }
   const img=await loadCover();
   const c=document.createElement('canvas');c.width=YW;c.height=YH;
   const g=c.getContext('2d');g.textBaseline='alphabetic';
@@ -1392,14 +1416,21 @@ function fitTabs(){
 let _rz;addEventListener('resize',()=>{clearTimeout(_rz);_rz=setTimeout(()=>{fixCityRows();fitTabs();fitMon()},120)});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{fitTabs();fixCityRows();fitMon()});
 /* 行事曆 → 結果頁：像素方塊由左上往右下蓋住畫面，趁這段時間把圖畫好，畫好後方塊再由左下往右上一格一格消失（上面不放文字） */
+async function prepareAssets(){
+  const t=[...EV,EGG].map(e=>e.title.normalize('NFKC')+e.loc+e.members.join('')).join('')+state.name+'的年度出席總表全年場次總覽共場今年總活動有你的參與。去過城市最常去出席月份最常見面個月到未粉絲非官方製作團體小分隊個人成員行程到場參加依日期排序任務演出標色塊0123456789';
+  await loadFonts(t);
+  await loadCover();
+}
 async function goResult(){
   if(busy)return;
   const st=computeStats();if(!st.n)return;
   busy=true;
   const btn=$('#btn-gen');
   try{
-    renderStats(st);
     btn.disabled=true;btn.textContent='...';
+    /* 字型和封面圖都確認載好才開始製圖；沒載好就提示，停在原頁 */
+    try{await prepareAssets()}catch(err){notice(assetMsg(err));return}
+    renderStats(st);
     const cover=reduce?Promise.resolve():wipeIn();
     const subs=soloSubjects();
     if(subs){window._card=null;$('#card-img').removeAttribute('src')}
@@ -1407,7 +1438,7 @@ async function goResult(){
       const c=await drawCard();
       $('#card-img').src=c.toDataURL('image/jpeg',.92);
       window._card=c;prepBlob(c);
-    }catch(err){window._card=null}
+    }catch(err){window._card=null;notice(assetMsg(err))}
     $('#btn-dl').disabled=!window._card;
     try{
       const cs=[];
@@ -1420,7 +1451,7 @@ async function goResult(){
       });
       window._years=cs;window._yearTags=(subs||[null]).map(sb=>sb?sb.tag:'');
       window._year=cs[0];$('#btn-dl-year').disabled=false;
-    }catch(err){window._years=[];window._yearTags=[];window._year=null;$('#btn-dl-year').disabled=true}
+    }catch(err){window._years=[];window._yearTags=[];window._year=null;$('#btn-dl-year').disabled=true;notice(assetMsg(err))}
     await cover;
     btn.textContent='Machi Gö →';btn.disabled=!state.picked.size;
     $('#toast').textContent='';
@@ -1525,7 +1556,7 @@ async function goAll(){
     await cover;
     show('s-all');
     if(!reduce)await wipeOut();
-  }catch(err){window._allYear=null}
+  }catch(err){window._allYear=null;notice(assetMsg(err))}
   finally{
     busy=false;
     if(!$('#wipe').hidden){$('#wipe').hidden=true;$('#wipe').textContent='';_pix=[]}
@@ -1616,7 +1647,7 @@ $('#btn-reset').addEventListener('click',()=>{
   document.querySelectorAll('#row-mem .tab').forEach((x,i)=>x.setAttribute('aria-pressed',i===0));
   window._card=null;window._year=null;window._years=[];window._yearTags=[];show('s-welcome');
 });
-try{loadFonts(EV.map(e=>e.title).join(''))}catch(_){}
+loadFonts(EV.map(e=>e.title).join('')).catch(()=>{});loadCover().catch(()=>{});
 </script>
 </body>
 </html>
