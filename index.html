@@ -1205,6 +1205,11 @@ function paintYear(g,draw,st,img,p,H=YH,solo=null){
   /* 個人：有勾選該成員個人場次才顯示 */
   MEM.forEach(n=>{
     const pe=EV.filter(e=>e.cat==='個人'&&e.members.includes(n));
+    /* 隱藏頁（全年總場次圖）：高有翔沒有個人場次，但要留一個只有英文名＋黃色分隔線的空區塊，排在高胥崴後面 */
+    if(_half&&n==='高有翔'&&!pe.length){
+      y+=sectionHead(g,y,p,draw,{name:EN_NAME[n],latin:true,color:COL[n],right:''})+Math.round(p*.5);
+      return;
+    }
     if(!pe.some(e=>!e.off&&isOn(e)))return;
     const on=pe.filter(e=>isOn(e)).length,tot=pe.filter(e=>!e.off).length;
     y+=sectionHead(g,y,p,draw,{name:EN_NAME[n]||n,latin:!!EN_NAME[n],color:COL[n],right:_half?'共 '+tot+' 場':'參加 '+on+' / '+tot+' 場'});
