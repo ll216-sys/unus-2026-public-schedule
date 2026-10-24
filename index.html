@@ -1488,7 +1488,21 @@ async function saveCanvases(items){
 }
 const saveCanvas=(c,filename)=>saveCanvases([{c,filename}]);
 const download=()=>saveCanvas(window._card,'UNUS-2026-'+safeName()+'.jpg');
-const downloadYear=()=>saveCanvases((window._years||[]).map((c,i)=>({c,filename:'UNUS-2026-all-events-'+safeName()+((window._yearTags||[])[i]?'-'+window._yearTags[i]:'')+'.jpg'})));
+/* 專一版有多個結果時，畫面上仍是各自一張；下載時把它們由上到下接成一張直向長圖，只存一個檔 */
+let _stitch=null;
+function stitchYears(cs){
+  if(cs.length<2)return cs[0]||null;
+  if(_stitch&&_stitch.src===cs)return _stitch.c;
+  const H=cs.reduce((a,c)=>a+c.height,0);
+  const o=document.createElement('canvas');o.width=cs[0].width;o.height=H;
+  const g=o.getContext('2d');let y=0;
+  cs.forEach(c=>{g.drawImage(c,0,y);y+=c.height});
+  _stitch={src:cs,c:o};return o;
+}
+const downloadYear=()=>{
+  const cs=window._years||[];
+  saveCanvases([{c:stitchYears(cs),filename:'UNUS-2026-all-events-'+safeName()+(cs.length===1&&(window._yearTags||[])[0]?'-'+window._yearTags[0]:'')+'.jpg'}]);
+};
 
 /* ---------- 隱藏頁：全年總場次圖 ---------- */
 /* 暫時把「全部場次都到場」「名字＝LYNN1031」套進 state 畫一張圖，畫完立刻還原，不影響使用者自己的選擇 */
