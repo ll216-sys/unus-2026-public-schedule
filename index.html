@@ -191,7 +191,7 @@ h1{margin:0;font:900 clamp(1.9rem,8.2vw,3rem)/1.18 var(--f-display);letter-spaci
 .h-num{margin:4px 0 2px;display:flex;align-items:baseline;gap:10px;line-height:.82}
 .h-num b{font:700 clamp(5.5rem,30vw,9rem)/.82 var(--f-num)}
 .h-num span{font:800 clamp(1.8rem,8vw,2.6rem)/1 var(--f-min)}
-.hero-disc{position:relative;width:clamp(96px,30vw,168px);aspect-ratio:1;flex:none}
+.hero-disc{position:relative;width:clamp(96px,30vw,168px);aspect-ratio:1;flex:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
 .hero-disc .spin-disc{border-width:4px}
 /* 專一版：年度紀錄與年度總表整塊隱藏（總計＋陀螺改畫在全年場次圖裡） */
 #s-res.solo .reveal,#s-res.solo .share>h3,#s-res.solo .share>.prev{display:none}
@@ -221,7 +221,7 @@ h1{margin:0;font:900 clamp(1.9rem,8.2vw,3rem)/1.18 var(--f-display);letter-spaci
 .prev #card-img{display:block;width:100%;height:auto;border:3px solid var(--ink);border-radius:14px;box-shadow:0 6px 0 var(--ink);background:var(--silver)}
 /* 預覽圖上的陀螺：疊一顆會原地旋轉的圓盤，位置與圖卡裡的靜態陀螺重合（下載的 JPG 仍是靜態圖） */
 .spin-disc{position:absolute;inset:0;border-radius:50%;overflow:hidden;background:var(--ink);border:.926cqw solid var(--ink)}
-.spin-disc img{position:absolute;left:50%;top:50%;width:110.06%;height:auto;max-width:none;animation:spinTop 1s linear infinite}
+.spin-disc img{position:absolute;left:50%;top:50%;width:110.06%;height:auto;max-width:none;animation:spinTop .8s linear infinite}
 @keyframes spinTop{from{transform:translate(-50%,-50%) rotate(-14deg)}to{transform:translate(-50%,-50%) rotate(346deg)}}
 .act{display:flex;gap:10px;margin-top:6px}
 .act>*{box-sizing:border-box;min-width:0;height:44px;padding:0;white-space:nowrap;border-radius:12px}
@@ -236,6 +236,39 @@ h1{margin:0;font:900 clamp(1.9rem,8.2vw,3rem)/1.18 var(--f-display);letter-spaci
 #s-all .all{max-width:440px;margin-inline:auto;display:grid;gap:14px}#s-all .yr{margin-top:0}
 .yr img:not([src]){display:none}
 .yr img{display:block;width:100%;height:auto;margin-top:10px;border:3px solid var(--ink);border-radius:14px;background:var(--paper)}
+/* 結果頁開場：大數字跑分 → 稱號螢幕先只亮「登陸星球」，跑完後三行字用映像管開機效果亮起 */
+.rank.rk-pending .rk-name,.rank.rk-pending .rk-en,.rank.rk-pending .rk-line{visibility:hidden;animation:none}
+.rank.rk-reveal .rk-name,.rank.rk-reveal .rk-en,.rank.rk-reveal .rk-line{animation:glHold 1s linear both}
+.rk-name,.rk-en,.rk-line{position:relative}
+.rk-lcd .gl{position:absolute;left:0;top:0;width:100%;pointer-events:none;color:var(--rk-ink);will-change:transform}
+.rk-lcd .gl0{animation:glk0 1s steps(1,end) both}.rk-lcd .gl1{animation:glk1 1s steps(1,end) both}.rk-lcd .gl2{animation:glk2 1s steps(1,end) both}.rk-lcd .gl3{animation:glk3 1s steps(1,end) both}.rk-lcd .gl4{animation:glk4 1s steps(1,end) both}
+@keyframes glHold{0%,90%{color:transparent;text-shadow:none}}
+@keyframes glk0{0%{transform:translateX(calc(var(--amp)*21.3px));opacity:1;text-shadow:calc(var(--amp)*-4.5px) 0 rgba(255,45,85,.9),calc(var(--amp)*4.5px) 0 rgba(45,125,255,.9)}5%{transform:translateX(calc(var(--amp)*-18.1px));opacity:0.3;text-shadow:calc(var(--amp)*-3.3px) 0 rgba(255,45,85,.9),calc(var(--amp)*3.3px) 0 rgba(45,125,255,.9)}10%{transform:translateX(calc(var(--amp)*-17.9px));opacity:1;text-shadow:calc(var(--amp)*-3.5px) 0 rgba(255,45,85,.9),calc(var(--amp)*3.5px) 0 rgba(45,125,255,.9)}15%{transform:translateX(calc(var(--amp)*11.0px));opacity:0.3;text-shadow:calc(var(--amp)*-3.4px) 0 rgba(255,45,85,.9),calc(var(--amp)*3.4px) 0 rgba(45,125,255,.9)}20%{transform:translateX(calc(var(--amp)*6.3px));opacity:1;text-shadow:calc(var(--amp)*-4.1px) 0 rgba(255,45,85,.9),calc(var(--amp)*4.1px) 0 rgba(45,125,255,.9)}26%{transform:translateX(calc(var(--amp)*-10.5px));opacity:1;text-shadow:calc(var(--amp)*-3.4px) 0 rgba(255,45,85,.9),calc(var(--amp)*3.4px) 0 rgba(45,125,255,.9)}32%{transform:translateX(calc(var(--amp)*-9.2px));opacity:0.55;text-shadow:calc(var(--amp)*-2.5px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.5px) 0 rgba(45,125,255,.9)}38%{transform:translateX(calc(var(--amp)*-7.9px));opacity:0.3;text-shadow:calc(var(--amp)*-3.2px) 0 rgba(255,45,85,.9),calc(var(--amp)*3.2px) 0 rgba(45,125,255,.9)}45%{transform:translateX(calc(var(--amp)*-4.0px));opacity:1;text-shadow:calc(var(--amp)*-2.9px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.9px) 0 rgba(45,125,255,.9)}52%{transform:translateX(calc(var(--amp)*3.2px));opacity:0.3;text-shadow:calc(var(--amp)*-2.8px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.8px) 0 rgba(45,125,255,.9)}59%{transform:translateX(calc(var(--amp)*-4.6px));opacity:0.3;text-shadow:calc(var(--amp)*-2.1px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.1px) 0 rgba(45,125,255,.9)}66%{transform:translateX(calc(var(--amp)*3.9px));opacity:0.55;text-shadow:calc(var(--amp)*-1.8px) 0 rgba(255,45,85,.9),calc(var(--amp)*1.8px) 0 rgba(45,125,255,.9)}73%{transform:translateX(calc(var(--amp)*1.7px));opacity:1;text-shadow:calc(var(--amp)*-1.7px) 0 rgba(255,45,85,.9),calc(var(--amp)*1.7px) 0 rgba(45,125,255,.9)}80%{transform:translateX(calc(var(--amp)*-1.2px));opacity:1;text-shadow:calc(var(--amp)*-1.2px) 0 rgba(255,45,85,.9),calc(var(--amp)*1.2px) 0 rgba(45,125,255,.9)}86%{transform:translateX(calc(var(--amp)*0.4px));opacity:1;text-shadow:calc(var(--amp)*-1.0px) 0 rgba(255,45,85,.9),calc(var(--amp)*1.0px) 0 rgba(45,125,255,.9)}91%{transform:none;opacity:1;text-shadow:none}}
+@keyframes glk1{0%{transform:translateX(calc(var(--amp)*10.1px));opacity:0.55;text-shadow:calc(var(--amp)*-4.3px) 0 rgba(255,45,85,.9),calc(var(--amp)*4.3px) 0 rgba(45,125,255,.9)}5%{transform:translateX(calc(var(--amp)*7.7px));opacity:0.3;text-shadow:calc(var(--amp)*-5.2px) 0 rgba(255,45,85,.9),calc(var(--amp)*5.2px) 0 rgba(45,125,255,.9)}10%{transform:translateX(calc(var(--amp)*10.9px));opacity:0.55;text-shadow:calc(var(--amp)*-3.9px) 0 rgba(255,45,85,.9),calc(var(--amp)*3.9px) 0 rgba(45,125,255,.9)}15%{transform:translateX(calc(var(--amp)*7.0px));opacity:1;text-shadow:calc(var(--amp)*-3.0px) 0 rgba(255,45,85,.9),calc(var(--amp)*3.0px) 0 rgba(45,125,255,.9)}20%{transform:translateX(calc(var(--amp)*13.0px));opacity:1;text-shadow:calc(var(--amp)*-2.7px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.7px) 0 rgba(45,125,255,.9)}26%{transform:translateX(calc(var(--amp)*7.8px));opacity:1;text-shadow:calc(var(--amp)*-3.4px) 0 rgba(255,45,85,.9),calc(var(--amp)*3.4px) 0 rgba(45,125,255,.9)}32%{transform:translateX(calc(var(--amp)*-12.4px));opacity:0.3;text-shadow:calc(var(--amp)*-3.0px) 0 rgba(255,45,85,.9),calc(var(--amp)*3.0px) 0 rgba(45,125,255,.9)}38%{transform:translateX(calc(var(--amp)*-7.6px));opacity:1;text-shadow:calc(var(--amp)*-2.5px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.5px) 0 rgba(45,125,255,.9)}45%{transform:translateX(calc(var(--amp)*-7.9px));opacity:0.55;text-shadow:calc(var(--amp)*-2.6px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.6px) 0 rgba(45,125,255,.9)}52%{transform:translateX(calc(var(--amp)*-3.6px));opacity:1;text-shadow:calc(var(--amp)*-2.3px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.3px) 0 rgba(45,125,255,.9)}59%{transform:translateX(calc(var(--amp)*-5.4px));opacity:1;text-shadow:calc(var(--amp)*-2.6px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.6px) 0 rgba(45,125,255,.9)}66%{transform:translateX(calc(var(--amp)*4.5px));opacity:0.55;text-shadow:calc(var(--amp)*-2.0px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.0px) 0 rgba(45,125,255,.9)}73%{transform:translateX(calc(var(--amp)*-1.4px));opacity:1;text-shadow:calc(var(--amp)*-1.2px) 0 rgba(255,45,85,.9),calc(var(--amp)*1.2px) 0 rgba(45,125,255,.9)}80%{transform:translateX(calc(var(--amp)*-0.6px));opacity:1;text-shadow:calc(var(--amp)*-1.3px) 0 rgba(255,45,85,.9),calc(var(--amp)*1.3px) 0 rgba(45,125,255,.9)}86%{transform:translateX(calc(var(--amp)*0.4px));opacity:0.3;text-shadow:calc(var(--amp)*-0.8px) 0 rgba(255,45,85,.9),calc(var(--amp)*0.8px) 0 rgba(45,125,255,.9)}91%{transform:none;opacity:1;text-shadow:none}}
+@keyframes glk2{0%{transform:translateX(calc(var(--amp)*16.4px));opacity:1;text-shadow:calc(var(--amp)*-4.2px) 0 rgba(255,45,85,.9),calc(var(--amp)*4.2px) 0 rgba(45,125,255,.9)}5%{transform:translateX(calc(var(--amp)*-13.3px));opacity:0.3;text-shadow:calc(var(--amp)*-5.8px) 0 rgba(255,45,85,.9),calc(var(--amp)*5.8px) 0 rgba(45,125,255,.9)}10%{transform:translateX(calc(var(--amp)*11.6px));opacity:0.55;text-shadow:calc(var(--amp)*-4.1px) 0 rgba(255,45,85,.9),calc(var(--amp)*4.1px) 0 rgba(45,125,255,.9)}15%{transform:translateX(calc(var(--amp)*6.9px));opacity:1;text-shadow:calc(var(--amp)*-2.9px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.9px) 0 rgba(45,125,255,.9)}20%{transform:translateX(calc(var(--amp)*7.4px));opacity:1;text-shadow:calc(var(--amp)*-3.5px) 0 rgba(255,45,85,.9),calc(var(--amp)*3.5px) 0 rgba(45,125,255,.9)}26%{transform:translateX(calc(var(--amp)*-5.1px));opacity:1;text-shadow:calc(var(--amp)*-2.8px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.8px) 0 rgba(45,125,255,.9)}32%{transform:translateX(calc(var(--amp)*9.7px));opacity:1;text-shadow:calc(var(--amp)*-2.4px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.4px) 0 rgba(45,125,255,.9)}38%{transform:translateX(calc(var(--amp)*5.0px));opacity:1;text-shadow:calc(var(--amp)*-2.6px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.6px) 0 rgba(45,125,255,.9)}45%{transform:translateX(calc(var(--amp)*6.3px));opacity:0.55;text-shadow:calc(var(--amp)*-2.1px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.1px) 0 rgba(45,125,255,.9)}52%{transform:translateX(calc(var(--amp)*5.1px));opacity:1;text-shadow:calc(var(--amp)*-2.2px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.2px) 0 rgba(45,125,255,.9)}59%{transform:translateX(calc(var(--amp)*-5.1px));opacity:0.55;text-shadow:calc(var(--amp)*-2.4px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.4px) 0 rgba(45,125,255,.9)}66%{transform:translateX(calc(var(--amp)*-3.1px));opacity:0.3;text-shadow:calc(var(--amp)*-1.5px) 0 rgba(255,45,85,.9),calc(var(--amp)*1.5px) 0 rgba(45,125,255,.9)}73%{transform:translateX(calc(var(--amp)*1.4px));opacity:1;text-shadow:calc(var(--amp)*-1.5px) 0 rgba(255,45,85,.9),calc(var(--amp)*1.5px) 0 rgba(45,125,255,.9)}80%{transform:translateX(calc(var(--amp)*1.7px));opacity:1;text-shadow:calc(var(--amp)*-1.3px) 0 rgba(255,45,85,.9),calc(var(--amp)*1.3px) 0 rgba(45,125,255,.9)}86%{transform:translateX(calc(var(--amp)*0.7px));opacity:1;text-shadow:calc(var(--amp)*-0.8px) 0 rgba(255,45,85,.9),calc(var(--amp)*0.8px) 0 rgba(45,125,255,.9)}91%{transform:none;opacity:1;text-shadow:none}}
+@keyframes glk3{0%{transform:translateX(calc(var(--amp)*16.8px));opacity:1;text-shadow:calc(var(--amp)*-5.2px) 0 rgba(255,45,85,.9),calc(var(--amp)*5.2px) 0 rgba(45,125,255,.9)}5%{transform:translateX(calc(var(--amp)*-18.1px));opacity:1;text-shadow:calc(var(--amp)*-5.4px) 0 rgba(255,45,85,.9),calc(var(--amp)*5.4px) 0 rgba(45,125,255,.9)}10%{transform:translateX(calc(var(--amp)*-13.1px));opacity:1;text-shadow:calc(var(--amp)*-3.9px) 0 rgba(255,45,85,.9),calc(var(--amp)*3.9px) 0 rgba(45,125,255,.9)}15%{transform:translateX(calc(var(--amp)*-15.2px));opacity:1;text-shadow:calc(var(--amp)*-4.1px) 0 rgba(255,45,85,.9),calc(var(--amp)*4.1px) 0 rgba(45,125,255,.9)}20%{transform:translateX(calc(var(--amp)*10.4px));opacity:1;text-shadow:calc(var(--amp)*-5.1px) 0 rgba(255,45,85,.9),calc(var(--amp)*5.1px) 0 rgba(45,125,255,.9)}26%{transform:translateX(calc(var(--amp)*5.8px));opacity:0.55;text-shadow:calc(var(--amp)*-2.6px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.6px) 0 rgba(45,125,255,.9)}32%{transform:translateX(calc(var(--amp)*-7.3px));opacity:0.3;text-shadow:calc(var(--amp)*-3.3px) 0 rgba(255,45,85,.9),calc(var(--amp)*3.3px) 0 rgba(45,125,255,.9)}38%{transform:translateX(calc(var(--amp)*-7.5px));opacity:1;text-shadow:calc(var(--amp)*-3.4px) 0 rgba(255,45,85,.9),calc(var(--amp)*3.4px) 0 rgba(45,125,255,.9)}45%{transform:translateX(calc(var(--amp)*-8.9px));opacity:1;text-shadow:calc(var(--amp)*-3.3px) 0 rgba(255,45,85,.9),calc(var(--amp)*3.3px) 0 rgba(45,125,255,.9)}52%{transform:translateX(calc(var(--amp)*7.2px));opacity:1;text-shadow:calc(var(--amp)*-2.3px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.3px) 0 rgba(45,125,255,.9)}59%{transform:translateX(calc(var(--amp)*-5.3px));opacity:0.55;text-shadow:calc(var(--amp)*-2.7px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.7px) 0 rgba(45,125,255,.9)}66%{transform:translateX(calc(var(--amp)*2.8px));opacity:1;text-shadow:calc(var(--amp)*-2.2px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.2px) 0 rgba(45,125,255,.9)}73%{transform:translateX(calc(var(--amp)*-3.0px));opacity:0.3;text-shadow:calc(var(--amp)*-1.1px) 0 rgba(255,45,85,.9),calc(var(--amp)*1.1px) 0 rgba(45,125,255,.9)}80%{transform:translateX(calc(var(--amp)*1.5px));opacity:0.3;text-shadow:calc(var(--amp)*-1.0px) 0 rgba(255,45,85,.9),calc(var(--amp)*1.0px) 0 rgba(45,125,255,.9)}86%{transform:translateX(calc(var(--amp)*0.6px));opacity:0.3;text-shadow:calc(var(--amp)*-0.8px) 0 rgba(255,45,85,.9),calc(var(--amp)*0.8px) 0 rgba(45,125,255,.9)}91%{transform:none;opacity:1;text-shadow:none}}
+@keyframes glk4{0%{transform:translateX(calc(var(--amp)*-8.0px));opacity:1;text-shadow:calc(var(--amp)*-5.9px) 0 rgba(255,45,85,.9),calc(var(--amp)*5.9px) 0 rgba(45,125,255,.9)}5%{transform:translateX(calc(var(--amp)*-13.0px));opacity:1;text-shadow:calc(var(--amp)*-5.8px) 0 rgba(255,45,85,.9),calc(var(--amp)*5.8px) 0 rgba(45,125,255,.9)}10%{transform:translateX(calc(var(--amp)*-9.8px));opacity:1;text-shadow:calc(var(--amp)*-3.7px) 0 rgba(255,45,85,.9),calc(var(--amp)*3.7px) 0 rgba(45,125,255,.9)}15%{transform:translateX(calc(var(--amp)*9.1px));opacity:1;text-shadow:calc(var(--amp)*-3.9px) 0 rgba(255,45,85,.9),calc(var(--amp)*3.9px) 0 rgba(45,125,255,.9)}20%{transform:translateX(calc(var(--amp)*-15.2px));opacity:0.55;text-shadow:calc(var(--amp)*-3.5px) 0 rgba(255,45,85,.9),calc(var(--amp)*3.5px) 0 rgba(45,125,255,.9)}26%{transform:translateX(calc(var(--amp)*12.9px));opacity:1;text-shadow:calc(var(--amp)*-4.6px) 0 rgba(255,45,85,.9),calc(var(--amp)*4.6px) 0 rgba(45,125,255,.9)}32%{transform:translateX(calc(var(--amp)*-8.9px));opacity:0.55;text-shadow:calc(var(--amp)*-2.3px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.3px) 0 rgba(45,125,255,.9)}38%{transform:translateX(calc(var(--amp)*-8.4px));opacity:1;text-shadow:calc(var(--amp)*-3.7px) 0 rgba(255,45,85,.9),calc(var(--amp)*3.7px) 0 rgba(45,125,255,.9)}45%{transform:translateX(calc(var(--amp)*-4.2px));opacity:1;text-shadow:calc(var(--amp)*-3.0px) 0 rgba(255,45,85,.9),calc(var(--amp)*3.0px) 0 rgba(45,125,255,.9)}52%{transform:translateX(calc(var(--amp)*-4.4px));opacity:0.3;text-shadow:calc(var(--amp)*-2.5px) 0 rgba(255,45,85,.9),calc(var(--amp)*2.5px) 0 rgba(45,125,255,.9)}59%{transform:translateX(calc(var(--amp)*5.3px));opacity:0.3;text-shadow:calc(var(--amp)*-1.6px) 0 rgba(255,45,85,.9),calc(var(--amp)*1.6px) 0 rgba(45,125,255,.9)}66%{transform:translateX(calc(var(--amp)*-2.3px));opacity:1;text-shadow:calc(var(--amp)*-1.6px) 0 rgba(255,45,85,.9),calc(var(--amp)*1.6px) 0 rgba(45,125,255,.9)}73%{transform:translateX(calc(var(--amp)*2.2px));opacity:1;text-shadow:calc(var(--amp)*-1.7px) 0 rgba(255,45,85,.9),calc(var(--amp)*1.7px) 0 rgba(45,125,255,.9)}80%{transform:translateX(calc(var(--amp)*1.0px));opacity:0.3;text-shadow:calc(var(--amp)*-1.4px) 0 rgba(255,45,85,.9),calc(var(--amp)*1.4px) 0 rgba(45,125,255,.9)}86%{transform:translateX(calc(var(--amp)*-0.6px));opacity:0.3;text-shadow:calc(var(--amp)*-0.9px) 0 rgba(255,45,85,.9),calc(var(--amp)*0.9px) 0 rgba(45,125,255,.9)}91%{transform:none;opacity:1;text-shadow:none}}
+.rank.rk-reveal .rk-lcd{animation:crtFlick 1.6s linear 1}
+.h-num b.bump{animation:numBump .28s steps(4) 1}
+@keyframes crtFlick{0%{filter:brightness(1.9);transform:translateX(0)}8%{filter:brightness(.65);transform:translateX(-2px)}16%{filter:brightness(1.5);transform:translateX(2px)}26%{filter:brightness(.8);transform:translateX(0)}38%{filter:brightness(1.3);transform:translateX(-1px)}52%{filter:brightness(.9);transform:translateX(1px)}68%{filter:brightness(1.15);transform:none}84%{filter:brightness(.95)}100%{filter:none;transform:none}}
+@keyframes numBump{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.rank.rk-reveal .rk-name,.rank.rk-reveal .rk-en,.rank.rk-reveal .rk-line,.rank.rk-reveal .rk-lcd,.h-num b.bump{animation:none}.rk-lcd .gl{display:none}}
+#fx-canvas{position:fixed;inset:0;width:100vw;height:100vh;z-index:98;pointer-events:none}
+/* 點稱號螢幕：雜訊閃爍＋稱號亂跳（結果頁開場動畫跑完才能用） */
+.rk-lcd{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.rank.rk-reveal .rk-lcd.zap{animation:crtZap .95s linear 1}
+.rk-lcd .rk-noise{position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:screen;opacity:.55;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.6 -.55'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");animation:rkNoise .95s steps(1,end) 1 both}
+.rk-lcd .rk-noise::before,.rk-lcd .rk-noise::after{content:"";position:absolute;left:0;right:0;height:9%;background:rgba(255,255,255,.28);animation:rkBar .95s steps(1,end) 1 both}
+.rk-lcd .rk-noise::after{height:4%;background:rgba(255,255,255,.4);animation-name:rkBar2}
+.rk-lcd.zap .rk-name,.rk-lcd.zap .rk-en{will-change:transform}
+@keyframes rkNoise{0%{background-position:0 0;opacity:.7}12%{background-position:-60px 40px;opacity:.35}24%{background-position:80px -30px;opacity:.65}36%{background-position:-20px 90px;opacity:.3}48%{background-position:50px 10px;opacity:.55}60%{background-position:-90px -50px;opacity:.25}72%{background-position:30px 70px;opacity:.4}84%{background-position:-40px -20px;opacity:.2}100%{opacity:0}}
+@keyframes rkBar{0%{top:12%}10%{top:55%}20%{top:30%}30%{top:78%}40%{top:5%}55%{top:62%}70%{top:40%}85%{top:88%}100%{top:20%;opacity:0}}
+@keyframes rkBar2{0%{top:70%}12%{top:20%}25%{top:84%}38%{top:46%}50%{top:8%}63%{top:58%}78%{top:26%}90%{top:72%}100%{top:40%;opacity:0}}
+@keyframes crtZap{0%{filter:brightness(2.1);transform:translateX(0)}8%{filter:brightness(.6);transform:translateX(-3px)}16%{filter:brightness(1.6);transform:translateX(3px)}26%{filter:brightness(.75);transform:translateX(-2px)}38%{filter:brightness(1.5);transform:translateX(2px)}50%{filter:brightness(.85);transform:translateX(-1px)}64%{filter:brightness(1.3);transform:translateX(1px)}80%{filter:brightness(.95);transform:none}100%{filter:none;transform:none}}
+/* 點成員色塊：背景格子的灰色瞬間染成淺淺的成員色，再慢慢退回 */
+body.chk-flash{animation:chkFlash .9s ease-out 1}
+@keyframes chkFlash{0%{background-color:var(--silver-2)}12%{background-color:var(--chk-c)}32%{background-color:var(--chk-c)}100%{background-color:var(--silver-2)}}
+@media(prefers-reduced-motion:reduce){body.chk-flash{animation:none}}
 #asset-note{position:fixed;left:50%;top:64px;transform:translateX(-50%);z-index:99;max-width:min(92vw,520px);padding:12px 16px;border:3px solid var(--ink);border-radius:14px;background:var(--paper);color:var(--ink);box-shadow:0 5px 0 var(--ink);font:700 .95rem/1.5 "Noto Sans TC",sans-serif;text-align:center}
 #asset-note[hidden]{display:none}
 .toast{margin:4px 0 0;min-height:1.5em;font:400 1.05rem var(--f-pixel);letter-spacing:.14em;color:var(--muted)}
@@ -665,8 +698,8 @@ const RANKS=[
   [10,'大眼星人','BIG EYES','睜大眼睛，每一場都是新鮮事。','#D3D0C8'],
   [20,'漂浮星人','FLOATER','跟著訊號輕輕飄進現場，剛剛好。','#FFA9C8'],
   [45,'電波星人','WAVER','頻率對上了，現場自然會找到你。','#A8E6EA'],
-  [70,'嗶波星人','BEEPER','嗶——嗶——，一偵測到現場就出發。','#FF8F6B'],
-  [90,'尖叫星人','SCREAMER','喊到破音也值得，聲音一定要傳到台上。','#8EF0C4'],
+  [70,'嗶波星人','BEEPER','嗶——嗶——，一偵測到現場就出發。','#8EF0C4'],
+  [90,'尖叫星人','SCREAMER','喊到破音也值得，聲音一定要傳到台上。','#FF8F6B'],
   [Infinity,'跳跳星人','JUMPER','停不下來，整年都在旋轉跳躍。','#FFE680']
 ].map(([lim,name,en,line,c])=>({lim,name,en,line,c}));
 /* 每個星球各有一個 LED 色：由主色衍生螢幕底、小標、英文名、掃描線、光暈 */
@@ -1435,7 +1468,7 @@ async function goResult(){
     btn.disabled=true;btn.textContent='...';
     /* 字型和封面圖都確認載好才開始製圖；沒載好就提示，停在原頁 */
     try{await prepareAssets()}catch(err){notice(assetMsg(err));return}
-    renderStats(st);
+    renderStats(st);prepReveal();
     const cover=reduce?Promise.resolve():wipeIn();
     const subs=soloSubjects();
     if(subs){window._card=null;$('#card-img').removeAttribute('src')}
@@ -1460,9 +1493,10 @@ async function goResult(){
     await cover;
     btn.textContent='Machi Gö →';btn.disabled=!state.picked.size;
     $('#toast').textContent='';
-    show('s-res');
+    show('s-res');lockNum(st.n);
     fixCityRows();fitMon();
     if(!reduce)await wipeOut();
+    startReveal(st.n);
   }finally{
     busy=false;
     btn.textContent='Machi Gö →';btn.disabled=!state.picked.size;
@@ -1568,6 +1602,213 @@ async function goAll(){
   }
 }
 
+/* ---------- 結果頁開場：跑分＋映像管開機 ---------- */
+let _rv=0;
+function prepReveal(){
+  _rv++;_rkReady=false;resetSpin();
+  const rk=document.querySelector('#s-res .rank');
+  rk.classList.remove('rk-reveal');
+  rk.querySelectorAll('.gl').forEach(x=>x.remove());
+  const b=$('#h-n');b.style.minWidth='';b.classList.remove('bump');
+  if(reduce){rk.classList.remove('rk-pending');return}
+  rk.classList.add('rk-pending');
+  b.textContent='0';
+}
+/* 畫面顯示之後再量寬度：取 0～N 之間最寬的那個，跑分時「場」字才不會左右晃 */
+function lockNum(n){
+  if(reduce)return;
+  const b=$('#h-n');let w=0;
+  for(let k=0;k<=n;k++){b.textContent=String(k);w=Math.max(w,b.offsetWidth)}
+  b.style.minWidth=w+'px';b.textContent='0';
+}
+/* 稱號三行字：同時被橫向切成幾條，各自左右亂晃並帶紅藍色偏，約 1 秒後對齊成正常的字 */
+function glitchLines(rk,id){
+  [['.rk-name',1],['.rk-en',.55],['.rk-line',.45]].forEach(([sel,amp])=>{
+    const el=rk.querySelector(sel);if(!el)return;
+    const txt=el.textContent,cuts=[0,24,43,62,82,100];
+    el.querySelectorAll('.gl').forEach(x=>x.remove());
+    for(let i=0;i<5;i++){
+      const sp=document.createElement('span');
+      sp.className='gl gl'+i;sp.setAttribute('aria-hidden','true');sp.textContent=txt;
+      sp.style.clipPath='inset('+cuts[i]+'% 0 '+(100-cuts[i+1])+'% 0)';sp.style.setProperty('--amp',amp);
+      el.appendChild(sp);
+    }
+    setTimeout(()=>{if(id===_rv){el.querySelectorAll('.gl').forEach(x=>x.remove());if(sel==='.rk-name')_rkReady=true}},1100);
+  });
+}
+/* 點稱號螢幕：雜訊閃爍一下，稱號（和英文名）快速亂跳成其他星球，最後停回自己的。只有開場動畫（跑分＋切字）跑完之後才能用 */
+let _rkReady=false,_rkBusy=false;
+function rkShuffle(){
+  if(!_rkReady||_rkBusy||reduce)return;
+  const rk=document.querySelector('#s-res .rank'),lcd=rk&&rk.querySelector('.rk-lcd'),nm=$('#rk-name'),en=$('#rk-en');
+  if(!lcd||!nm||!en)return;
+  _rkBusy=true;
+  const id=_rv,R=rankFull(),keepN=R.name,keepE=R.en;
+  const pool=RANKS.filter(x=>x.name!==R.name);
+  const seq=[];let last=null;
+  for(let i=0;i<12;i++){let c;do{c=pool[Math.floor(Math.random()*pool.length)]}while(c===last&&pool.length>1);seq.push(c);last=c}
+  const nz=document.createElement('div');nz.className='rk-noise';nz.setAttribute('aria-hidden','true');lcd.appendChild(nz);
+  lcd.classList.remove('zap');void lcd.offsetWidth;lcd.classList.add('zap');
+  let i=0;
+  const fin=()=>{
+    nz.remove();lcd.classList.remove('zap');nm.style.transform='';en.style.transform='';
+    if(id===_rv){nm.textContent=keepN;en.textContent=keepE}
+    _rkBusy=false;
+  };
+  const tick=()=>{
+    if(id!==_rv){fin();return}
+    if(i>=seq.length){fin();return}
+    const c=seq[i++];
+    nm.textContent=c.name;en.textContent=c.en;
+    nm.style.transform='translateX('+(Math.round((Math.random()-.5)*14))+'px)';
+    en.style.transform='translateX('+(Math.round((Math.random()-.5)*8))+'px)';
+    setTimeout(tick,60+Math.random()*30);
+  };
+  tick();
+}
+document.addEventListener('click',ev=>{if(ev.target.closest&&ev.target.closest('#s-res .rk-lcd'))rkShuffle()});
+/* 結果頁陀螺：平常 1.25 倍速（一圈 0.8 秒）；連按 2 下 → 1.5 倍轉 2 圈 → 2 倍轉 2 圈 → 2.5 倍轉 2 圈 → 3 倍並維持（倍數都是相對於平常速度；圈數用動畫本身的進度算，所以不論轉多快都剛好兩圈） */
+let _spinTok=0,_spinOn=false;
+const spinAnim=()=>{const img=document.querySelector('#s-res .hero-disc .spin-disc img');return img?img.getAnimations().find(a=>a.animationName==='spinTop'):null};
+function resetSpin(){_spinTok++;_spinOn=false;const a=spinAnim();if(a)a.playbackRate=1;const d=document.querySelector('#s-res .hero-disc');if(d)d.style.transform=''}
+/* 加速後陀螺在「數字右邊那一半」的範圍裡撞來撞去：碰到邊就反彈，移動速度跟著轉速一起變快（每秒 140px × 倍數） */
+let _spinMult=1.5;
+function bounceDisc(tok){
+  const d=document.querySelector('#s-res .hero-disc'),hero=document.querySelector('#s-res .hero');
+  if(!d||!hero)return;
+  const ang=(20+Math.random()*50)*Math.PI/180;
+  let x=0,y=0,dx=Math.cos(ang)*(Math.random()<.5?-1:1),dy=Math.sin(ang)*(Math.random()<.5?-1:1),last=null;
+  const step=ts=>{
+    if(tok!==_spinTok){d.style.transform='';return}
+    if(last===null)last=ts;
+    const dt=Math.min(.05,(ts-last)/1000);last=ts;
+    const hr=hero.getBoundingClientRect(),r=d.getBoundingClientRect();
+    const il=hr.left+hero.clientLeft,it=hr.top+hero.clientTop,iw=hero.clientWidth,ih=hero.clientHeight;
+    const L=il+iw*.48,R=il+iw-4,T=it+4,B=it+ih-4;
+    const rx=r.left-x,ry=r.top-y;
+    let minX=L-rx,maxX=R-r.width-rx,minY=T-ry,maxY=B-r.height-ry;
+    if(maxX<minX)minX=maxX=(minX+maxX)/2;
+    if(maxY<minY)minY=maxY=(minY+maxY)/2;
+    const v=140*_spinMult;
+    x+=dx*v*dt;y+=dy*v*dt;
+    if(x<minX){x=minX;dx=Math.abs(dx)}else if(x>maxX){x=maxX;dx=-Math.abs(dx)}
+    if(y<minY){y=minY;dy=Math.abs(dy)}else if(y>maxY){y=maxY;dy=-Math.abs(dy)}
+    d.style.transform='translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,0)';
+    requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+function boostSpin(){
+  if(reduce||_spinOn)return;
+  const a=spinAnim();if(!a)return;
+  _spinOn=true;const tok=++_spinTok;
+  const dur=a.effect.getComputedTiming().duration,mults=[1.5,2,2.5,3];
+  const run=k=>{
+    if(tok!==_spinTok)return;
+    a.playbackRate=mults[k];_spinMult=mults[k];
+    if(k===mults.length-1)return;
+    const start=a.currentTime/dur;
+    const chk=()=>{if(tok!==_spinTok)return;if(a.currentTime/dur>=start+2)run(k+1);else requestAnimationFrame(chk)};
+    requestAnimationFrame(chk);
+  };
+  run(0);bounceDisc(tok);
+}
+(function(){
+  const d=document.querySelector('#s-res .hero-disc');if(!d)return;let t=0;
+  d.addEventListener('click',()=>{const n=performance.now();if(n-t<400){t=0;boostSpin()}else t=n});
+})();
+function startReveal(n){
+  if(reduce)return;
+  const id=_rv,b=$('#h-n'),rk=document.querySelector('#s-res .rank');
+  const dur=Math.min(1500,600+n*16);let t0=null;
+  const done=()=>{
+    if(id!==_rv)return;
+    b.textContent=String(n);b.style.minWidth='';
+    b.classList.remove('bump');void b.offsetWidth;b.classList.add('bump');
+    setTimeout(()=>{if(id!==_rv)return;rk.classList.remove('rk-pending');rk.classList.add('rk-reveal');glitchLines(rk,id)},220);
+  };
+  const step=ts=>{
+    if(id!==_rv)return;
+    if(t0===null)t0=ts;
+    const k=Math.min(1,(ts-t0)/dur),e=1-Math.pow(1-k,3);
+    b.textContent=String(Math.round(n*e));
+    if(k<1)requestAnimationFrame(step);else done();
+  };
+  requestAnimationFrame(step);
+}
+/* ---------- 名字欄彩蛋：打成員名字噴出該成員色的像素紙花；打 U:NUS 四色一起噴 ---------- */
+const NAME_FX=(()=>{
+  const m={},add=(k,l)=>l.forEach(x=>{m[x.toLowerCase()]=k});
+  add('高胥崴',['高胥崴','胥崴','崴','Guei']);
+  add('高有翔',['高有翔','有翔','Sean','SeanKo']);
+  add('吳昱廷',['吳昱廷','昱廷','AuZTIN']);
+  add('蔡承祐',['蔡承祐','承祐','CY','C.Y']);
+  add('all',['U:NUS']);
+  return m;
+})();
+function nameFxKey(v){return NAME_FX[(v||'').normalize('NFKC').trim().toLowerCase()]||null}
+let _fxOn=false;
+function pixelBurst(key,srcEl){
+  if(reduce||_fxOn)return;
+  _fxOn=true;
+  const cols=key==='all'?MEM.map(n=>COL[n]):[COL[key]];
+  const pal=[];cols.forEach(c=>{pal.push(c,c,mixWhite(c,.45))});
+  const cv=document.createElement('canvas');cv.id='fx-canvas';
+  const dpr=Math.min(2,window.devicePixelRatio||1),W=innerWidth,H=innerHeight;
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);document.body.appendChild(cv);
+  const g=cv.getContext('2d');g.scale(dpr,dpr);
+  const r=srcEl.getBoundingClientRect(),ox=r.left+r.width/2,oy=r.top+r.height*.2;
+  const ps=[];
+  /* 全程用真實時間（毫秒）計算：不論螢幕是 60Hz 還是 120Hz，整個效果都在 1.5 秒內結束 */
+  const spawn=(n,delay)=>{for(let i=0;i<n;i++){
+    const a=-Math.PI/2+(Math.random()-.5)*Math.PI*.95,v=(7+Math.random()*10)*.1;
+    ps.push({x:ox+(Math.random()-.5)*r.width*.5,y:oy,vx:Math.cos(a)*v,vy:Math.sin(a)*v,s:6+Math.floor(Math.random()*3)*2,c:pal[Math.floor(Math.random()*pal.length)],t:-delay,life:900+Math.random()*350});
+  }};
+  spawn(22,0);spawn(16,100);
+  let t0=null,last=0;
+  const end=()=>{cv.remove();_fxOn=false};
+  const tick=now=>{
+    if(t0===null){t0=now;last=now}
+    const dtms=Math.min(50,now-last);last=now;
+    const dt=dtms/16.667;
+    if(now-t0>1450){end();return}
+    g.clearRect(0,0,W,H);
+    let alive=0;
+    ps.forEach(p=>{
+      p.t+=dtms;
+      if(p.t<0){alive++;return}
+      p.vy+=.042*dt;p.vx*=Math.pow(.992,dt);p.x+=p.vx*dt;p.y+=p.vy*dt;
+      if(p.t>p.life||p.y>H+20)return;
+      alive++;
+      const fade=p.t>p.life-300?(p.life-p.t)/300:1;
+      g.globalAlpha=Math.max(0,fade);g.fillStyle=p.c;
+      g.fillRect(Math.round(p.x/2)*2,Math.round(p.y/2)*2,p.s,p.s);
+    });
+    g.globalAlpha=1;
+    if(alive)requestAnimationFrame(tick);else end();
+  };
+  requestAnimationFrame(tick);
+}
+function gridFlash(hex,t=.65){
+  if(reduce||!hex)return;
+  const b=document.body;
+  b.style.setProperty('--chk-c',mixWhite(hex,t));
+  b.classList.remove('chk-flash');void b.offsetWidth;b.classList.add('chk-flash');
+  clearTimeout(gridFlash._t);gridFlash._t=setTimeout(()=>b.classList.remove('chk-flash'),1000);
+}
+(function(){
+  const inp=document.getElementById('in-name');let tm=0,comp=false,last='';
+  const fire=()=>{
+    if(comp)return;
+    const key=nameFxKey(inp.value);
+    if(key&&inp.value!==last){last=inp.value;pixelBurst(key,inp)}
+    else if(!key)last='';
+  };
+  inp.addEventListener('compositionstart',()=>{comp=true});
+  inp.addEventListener('compositionend',()=>{comp=false;clearTimeout(tm);tm=setTimeout(fire,350)});
+  inp.addEventListener('input',()=>{clearTimeout(tm);tm=setTimeout(fire,350)});
+})();
+
 /* ---------- wiring ---------- */
 document.querySelectorAll('[data-cover]').forEach(i=>{i.src=COVER});
 load();
@@ -1626,6 +1867,7 @@ $('#list').addEventListener('click',ev=>{
     state.mem=b.dataset.mem;
     row.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-pressed',x===b));
     renderList();updateCounters();
+    if(b.dataset.mem)gridFlash(COL[b.dataset.mem]);
   });
 })();
 $('#btn-gen').addEventListener('click',()=>{if(eggPath())goEgg();else goResult()});
