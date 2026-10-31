@@ -596,12 +596,13 @@ const EV=RAW.map(([id,ds,loc,title,mem,cat])=>{
   const [a,b]=ds.split('-'); const [m,d]=a.split('/').map(Number);
   const d2=b?Number(b.split('/')[1]):null;
   const members=mem?mem.split(' '):MEM.slice();
-  return {id,m,d,d2,loc,title,cat,members,all:members.length===4,off:loc==='非公開'};
+  return {id,m,d,d2,loc,title,cat,members,all:members.length===4,off:loc==='非公開',hid:loc==='非公開'};
 }).sort((x,y)=>x.m-y.m||x.d-y.d||x.id-y.id);
-/* 非公開場次：只顯示、不可勾選，也不計入任何場次統計 */
-const EVA=EV.filter(e=>!e.off);
-const TOTAL=EVA.length;
-const MON_TOTAL=Array.from({length:12},(_,i)=>EVA.filter(e=>e.m===i+1).length);
+/* 非公開場次：預設只顯示、不可勾選，也不計入任何場次統計。
+   彩蛋：對它連點 5 下就會解鎖並勾選（之後計入全年場次與年度總數）；再點一下又變回禁選。 */
+let EVA,TOTAL,MON_TOTAL;
+function recount(){EVA=EV.filter(e=>!e.off);TOTAL=EVA.length;MON_TOTAL=Array.from({length:12},(_,i)=>EVA.filter(e=>e.m===i+1).length)}
+recount();
 
 /* ---------- state ---------- */
 const $=(s,r=document)=>r.querySelector(s);
@@ -661,7 +662,7 @@ function renderList(){
 function evButton(e){
   const b=document.createElement('button');b.type='button';b.className='ev'+(e.id===41?' sp':'');b.dataset.id=e.id;
   b.setAttribute('aria-pressed',isOn(e));
-  if(e.off){b.disabled=true;b.classList.add('off')}
+  if(e.off){b.setAttribute('aria-disabled','true');b.tabIndex=-1;b.classList.add('off')}
   const dt=el('span','ev-date'+(e.d2?' range':''));dt.appendChild(el('b',null,e.d2?e.d+'–'+e.d2:String(e.d)));
   dt.appendChild(el('i',null,e.loc));
   const main=el('span','ev-main');
@@ -791,7 +792,7 @@ function renderStats(st){
   const mem=el('div','mem');
   MEM.forEach(n=>{
     const r=el('div','mem-r');r.appendChild(el('span',null,n));
-    const b=el('div','mem-bar');const i=el('i');i.style.width=(st.n?st.mem[n]/st.n*100:0)+'%';i.style.background=COL[n];b.appendChild(i);
+    const b=el('div','mem-bar');const i=el('i');{const mt=EVA.filter(e=>e.members.includes(n)).length;i.style.width=(mt?Math.min(1,st.mem[n]/mt)*100:0)+'%'};i.style.background=COL[n];b.appendChild(i);
     r.append(b,el('em',null,String(st.mem[n])));mem.appendChild(r);
   });
   s2.appendChild(mem);box.appendChild(s2);
@@ -1851,9 +1852,23 @@ function spRun(b){
   }
   setTimeout(()=>b.classList.remove('run','burst'),1600);
 }
+let _offTap={id:0,n:0,t:0};
+function setHid(e,unlock){
+  e.off=!unlock;
+  if(unlock)state.picked.add(e.id);else state.picked.delete(e.id);
+  recount();renderList();updateCounters();
+}
 $('#list').addEventListener('click',ev=>{
-  const b=ev.target.closest('.ev');if(!b||b.disabled)return;
+  const b=ev.target.closest('.ev');if(!b)return;
   const id=Number(b.dataset.id);
+  const he=EV.find(x=>x.id===id&&x.hid);
+  if(_offTap.id!==id)_offTap={id:0,n:0,t:0};
+  if(he){
+    if(!he.off){setHid(he,false);return}
+    const now=Date.now();_offTap=(_offTap.id===id&&now-_offTap.t<700)?{id,n:_offTap.n+1,t:now}:{id,n:1,t:now};
+    if(_offTap.n>=5){_offTap={id:0,n:0,t:0};setHid(he,true)}
+    return;
+  }
   if(state.picked.has(id))state.picked.delete(id);else state.picked.add(id);
   b.setAttribute('aria-pressed',state.picked.has(id));save();
   if(b.classList.contains('sp')&&state.picked.has(id))spRun(b);
@@ -1897,6 +1912,7 @@ $('#btn-dl-all').addEventListener('click',()=>saveCanvases([{c:window._allYear,f
 $('#btn-reset').addEventListener('click',()=>{
   $('#toast').textContent='';
   state.picked.clear();state.egg=false;state.name='';state.mem='';save();
+  EV.forEach(e=>{if(e.hid)e.off=true});recount();
   $('#in-name').value='';
   document.querySelectorAll('#row-mem .tab').forEach((x,i)=>x.setAttribute('aria-pressed',i===0));
   window._card=null;window._year=null;window._years=[];window._yearTags=[];show('s-welcome');
