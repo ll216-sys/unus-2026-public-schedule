@@ -846,7 +846,7 @@ async function loadFonts(text){
   const specs=[
     ['800 60px "Shippori Mincho B1"',SENT],['800 92px "Shippori Mincho B1"',NAMES],['700 60px "Shippori Mincho B1"',SENT+text],['700 20px "Shippori Mincho B1"',COPYRIGHT],['700 20px "Noto Serif TC"','值趴'],
     ['700 100px "Saira Condensed"',LAT+'OF'],['700 30px "Saira Condensed"','GUEISEAN KOAuZTINC.Y'],
-    ['900 100px Unbounded',LAT],['400 30px "Jersey 10"',LAT],
+    ['900 100px Unbounded',LAT],['700 100px Unbounded',LAT+':'],['400 30px "Jersey 10"',LAT],
     ['900 80px "Noto Sans TC"',text],['700 30px "Noto Sans TC"',text],['500 22px "Noto Sans TC"',text+'高胥崴高有翔吳昱廷蔡承祐共場']
   ];
   const missing=()=>specs.filter(([f,t])=>{try{return !document.fonts.check(f,t)}catch(_){return false}});
@@ -1027,6 +1027,16 @@ function drawChip(g,x,y,w,h,txt,fs,on,off){
   g.fillText(txt,x+w/2,y+h/2+fs*.34);g.textAlign='left';
 }
 let _cut=false;
+
+/* U:NFOLD 字樣改用 Unbounded（縮成 80%），其餘維持明朝體 */
+function drawMixed(g,text,fs,maxW,minFs,x,y,col){
+  const parts=text.split(/(U:NFOLD(?: : SOMEDAY)?)/).filter(Boolean);
+  const fnt=(isU,f)=>isU?`700 ${(f*.8).toFixed(1)}px Unbounded, "Noto Sans TC", sans-serif`:FS(f);
+  const wid=f=>parts.reduce((a,t)=>{g.font=fnt(/^U:NFOLD/.test(t),f);return a+g.measureText(t).width},0);
+  let f=fs;while(wid(f)>maxW&&f>minFs)f-=1;
+  g.fillStyle=col;g.textAlign='left';let px=x;
+  parts.forEach(t=>{const u=/^U:NFOLD/.test(t);g.font=fnt(u,f);g.fillText(t,px,y);px+=g.measureText(t).width});
+}
 function fitTitle(g,text,fs,maxW,minFs){
   let f=fs;g.font=FS(f);
   while(g.measureText(text).width>maxW&&f>minFs){f-=1;g.font=FS(f)}
@@ -1060,7 +1070,7 @@ function drawItem(g,it,x,y,colW,p,draw){
     if(draw){
       drawChip(g,x,y+(p-ch)/2,cw,ch,txt,fs,isOn(e),e.off);
       const mw=colW-cw-12-(pips?pips+10:0);
-      const t=fitTitle(g,title,tf,mw,Math.round(tf*.74));g.fillStyle=col;g.textAlign='left';g.fillText(t,x+cw+12,y+p/2+tf*.36);
+      if(/U:NFOLD/.test(title)){drawMixed(g,title,tf,mw,Math.round(tf*.74),x+cw+12,y+p/2+tf*.36,col)}else{const t=fitTitle(g,title,tf,mw,Math.round(tf*.74));g.fillStyle=col;g.textAlign='left';g.fillText(t,x+cw+12,y+p/2+tf*.36);}
       if(pips){let px=x+colW-pips;e.members.forEach(n=>{g.fillStyle=COL[n];g.fillRect(px,y+p/2-6,10,12);px+=13})}
     }
     return p;
