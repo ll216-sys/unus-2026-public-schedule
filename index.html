@@ -921,7 +921,7 @@ function drawRankLED(g,x,y,w,h,R){
 }
 async function drawCard(){
   const st=computeStats();
-  const all=EV.map(e=>e.title).join('')+state.name+'的年度出席總表全年共場今年總活動有你的參與。去過城市最常去出席月份最常見面個月到未粉絲非官方製作團體小分隊個人成員';
+  const all=EV.map(e=>e.title).join('')+state.name+'的年度出席總表全年共場今年總活動有你的參與。去過城市最常去出席月份最常見面個月到未粉絲非官方製作團體小分隊個人成員@unus__official';
   await loadFonts(all+'0123456789');
   const W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
   g.textBaseline='alphabetic';
@@ -934,7 +934,7 @@ async function drawCard(){
   const k=34,L=78;
   [[k,k,1,1],[W-k,k,-1,1],[k,H-k,1,-1],[W-k,H-k,-1,-1]].forEach(([x,y,dx,dy])=>{g.beginPath();g.moveTo(x+dx*L,y);g.lineTo(x,y);g.lineTo(x,y+dy*L);g.stroke()});
   /* 標籤 */
-  {const LT=rkTheme(rankFull(st.n)),tx='2026  ・  U:NUS';g.save();g.font=FP(42);g.lineJoin='round';g.strokeStyle=INK;g.lineWidth=9;g.strokeText(tx,84,106);g.shadowColor=LT.gc;g.shadowBlur=14;g.fillStyle=LT.ink;g.fillText(tx,84,106);g.restore()}
+  {const LT=rkTheme(rankFull(st.n)),tx='2026  ・  U:NUS  ・  @unus__official';g.save();let _fs=42;g.font=FP(_fs);while(g.measureText(tx).width>912&&_fs>24){_fs--;g.font=FP(_fs)}g.lineJoin='round';g.strokeStyle=INK;g.lineWidth=9;g.strokeText(tx,84,106);g.shadowColor=LT.gc;g.shadowBlur=14;g.fillStyle=LT.ink;g.fillText(tx,84,106);g.restore()}
   /* 名字 */
   g.fillStyle=INK;
   const nm=fit(g,state.name,FB,560,92,46,900);g.font=FB(parseInt(g.font.match(/(\d+)px/)[1]),900);g.textAlign='right';g.fillText(nm,996,226);g.textAlign='left';
@@ -1266,7 +1266,7 @@ function paintYear(g,draw,st,img,p,H=YH,solo=null){
 async function drawYear(solo=null){
   const st=solo?Object.assign(computeStats(),{n:solo.n}):computeStats();
   const txt=[...EV,EGG].map(e=>e.title.normalize('NFKC')+e.loc+e.members.join('')).join('')+state.name+'的全年場次總覽到場未到今年總共活動有你的參與。參加共場依日期排序團體小分隊個人行程全員粉絲非官方製作未標色塊';
-  await loadFonts(txt+'0123456789AK嘻哈小分隊個人演出任務GueiAuZTINSeanKoC.Y');
+  await loadFonts(txt+'0123456789AK嘻哈小分隊個人演出任務GueiAuZTINSeanKoC.Y@gao__guei@seanko61@yut1ng_530@4.10_cy ');
   const img=await loadCover();
   const c=document.createElement('canvas');c.width=YW;c.height=YH;
   const g=c.getContext('2d');g.textBaseline='alphabetic';
@@ -1287,7 +1287,7 @@ async function drawYear(solo=null){
   /* 頁尾 */
   const fy=H-92;g.fillStyle=CP_LINE;g.fillRect(YM+12,fy-26,YW-2*YM-24,1.5);
   g.font=FB(20,500);let fx=YM+12;
-  if(solo)soloNameChip(g,YM+12,fy-8);else MEM.forEach(n=>{g.fillStyle=COL[n];g.fillRect(fx,fy,18,18);g.fillStyle=T.sub;g.fillText(n,fx+26,fy+17);fx+=26+g.measureText(n).width+22});
+  if(solo)soloNameChip(g,YM+12,fy-8);else {const IG={'高胥崴':'@gao__guei','高有翔':'@seanko61','吳昱廷':'@yut1ng_530','蔡承祐':'@4.10_cy'},SQ=12;g.font=FB(14.5,500);MEM.forEach(n=>{const lab=n+' '+IG[n];g.fillStyle=COL[n];g.fillRect(fx,fy+17-SQ+Math.round(SQ*.12),SQ,SQ);g.fillStyle=T.sub;g.fillText(lab,fx+SQ+8,fy+17);fx+=SQ+8+g.measureText(lab).width+20})}
   if(_half){
     /* 隱藏頁：版權標換成黑底白框的「©LYNN1031」小標 */
     const tx='©LYNN1031';g.save();g.font=FB(20,900);g.textAlign='left';const tw0=g.measureText(tx).width,bw=tw0+24,bh=32,bx=YW-YM-12-bw,by=fy-7;
