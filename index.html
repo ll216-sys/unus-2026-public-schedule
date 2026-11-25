@@ -564,7 +564,7 @@ const RAW=[
 [55,'10/14','桃園','健行科大 | 貳柒UnCHaining','高有翔 吳昱廷 蔡承祐','團體'],
 [56,'10/21','台中','中台科大 | 向陽音浪青春狂響','蔡承祐','個人'],
 [57,'10/22','新北','辭修高中校慶演唱會','高有翔 吳昱廷 蔡承祐','團體'],
-[58,'10/25','花蓮','第六屆 農好生活節','高有翔 吳昱廷 蔡承祐','團體'],
+[58,'10/25','花蓮','農好生活節','高有翔 吳昱廷 蔡承祐','團體'],
 [59,'10/25','台北','《Crash, Boom Boom Love!》音樂劇','高胥崴','個人'],
 [60,'10/30','台北','《Crash, Boom Boom Love!》音樂劇','高胥崴','個人'],
 [61,'10/31','台北','《Crash, Boom Boom Love!》音樂劇*錄影1','高胥崴','個人'],
@@ -586,15 +586,18 @@ const RAW=[
 [77,'11/18','台南','崑山科大迎新演唱會','蔡承祐','個人'],
 [78,'11/18','新北','明志科大 | 三明祭','吳昱廷','個人'],
 [79,'11/19','台北','耶誕星願奇蹟之森 點燈大使 | 新光三越北車','','團體'],
-[80,'11/21','台中','耶誕星願奇蹟之森 點燈大使 | 新光三越中港','','團體'],
+[80,'11/21','台中','璀璨啟航點燈之夜 點燈嘉賓 | 新光三越中港','','團體'],
 [81,'11/22','台南','虎頭埤水與綠 玩埤派對','','團體'],
 [82,'11/25','嘉義','崇仁醫專迎新 | 崇拾星光·青春綻放','蔡承祐','個人'],
+[92,'11/26','屏東','屏大校慶 | Re:Live音你而聚','蔡承祐','個人'],
 [83,'12/5','高雄','OPEN!夢想音樂節','','團體'],
 [84,'12/6','台北','TPVL臺北伊斯特主場賽後表演嘉賓','','團體'],
+[93,'12/12','台北','草山FUN風音樂節','吳昱廷','個人'],
 [85,'12/12','桃園','《Crash, Boom Boom Love!》音樂劇','高胥崴','個人'],
 [86,'12/13','桃園','《Crash, Boom Boom Love!》音樂劇','高胥崴','個人'],
 [87,'12/19','台中','《Crash, Boom Boom Love!》音樂劇','高胥崴','個人'],
 [88,'12/20','台中','《Crash, Boom Boom Love!》音樂劇','高胥崴','個人'],
+[91,'12/23','台中','中科大 | 聖誕宿夜不打烊','','團體'],
 [89,'12/31','桃園','-','','團體'],
 [90,'12/31','嘉義','-','','團體']
 ];
@@ -946,64 +949,72 @@ function drawRankLED(g,x,y,w,h,R){
   g.shadowColor=T.ledEn;g.shadowBlur=10;g.fillStyle=T.deep;g.fillText(R.en,x+6,y+h+es*.2);g.shadowBlur=0;ls(0);
   g.restore();
 }
+/* ---------- 年度出席總表（圖卡）：太陽光芒版 ----------
+   中心一顆黑圓放場數＋稱號；12 個月份各自向外長出一片扇形（每月 2 欄、一場一格），
+   有出席才亮、沒出席是淡灰格；月份英文簡寫放在黑圓內緣，稱號色、有出席才亮。 */
+function cardWedge(g,cx,cy,r0,r1,a0,a1){g.beginPath();g.arc(cx,cy,r1,a0,a1);g.arc(cx,cy,r0,a1,a0,true);g.closePath()}
+function cardCenter(g,st,cx,cy,k){
+  g.save();g.textAlign='center';
+  g.font=FP(Math.round(22*k));g.fillStyle='#9AA0AD';if('letterSpacing' in g)g.letterSpacing='3px';g.fillText('ATTENDED',cx,cy+-60*k);if('letterSpacing' in g)g.letterSpacing='0px';
+  const nf=Math.round((st.n>99?112:134)*k*1.12);g.font=FN(nf,700);const ns=String(st.n),nm=g.measureText(ns),nw=nm.width,asc=Math.round(nm.actualBoundingBoxAscent);
+  const ofs=27,kfs=Math.round(46*k),ls=3;
+  g.font=FS8(kfs);const kw=g.measureText('場').width;
+  g.font=FN(ofs,700);if('letterSpacing' in g)g.letterSpacing=ls+'px';const ow=g.measureText('OF '+TOTAL).width;if('letterSpacing' in g)g.letterSpacing='0px';
+  const sw=Math.max(kw,ow),gap=12,sx=cx-(nw+gap+sw)/2,NB=cy+80*k;
+  g.textAlign='left';g.fillStyle='#FFFFFF';g.font=FN(nf,700);g.fillText(ns,sx,NB);
+  g.font=FS8(kfs);g.fillText('場',sx+nw+gap,NB);
+  g.font=FN(ofs,700);g.fillStyle='#7B8090';if('letterSpacing' in g)g.letterSpacing=ls+'px';g.fillText('OF '+TOTAL,sx+nw+gap,NB-asc+Math.round(ofs*.98));if('letterSpacing' in g)g.letterSpacing='0px';
+  g.restore();
+}
 async function drawCard(){
   const st=computeStats();
-  const all=EV.map(e=>e.title).join('')+state.name+'的年度出席總表全年共場今年總活動有你的參與。去過城市最常去出席月份最常見面個月到未粉絲非官方製作團體小分隊個人成員@unus__official';
-  await loadFonts(all+'0123456789');
+  const all=EV.map(e=>e.title).join('')+state.name+'的年度出席總表全年共場今年總活動有你的參與，。去過城市最常去出席月份最常見面個月到未粉絲非官方製作團體小分隊個人成員@unus__official';
+  await loadFonts(all+'0123456789OF');
   const W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
   g.textBaseline='alphabetic';
+  const R=rankFull(st.n),RT=rkTheme(R);
   /* 底：銀色格紋 */
   g.fillStyle=T.bg;g.fillRect(0,0,W,H);
   const S=54;g.fillStyle=T.chk;
   for(let y=0;y<Math.ceil(H/S);y++)for(let x=0;x<Math.ceil(W/S);x++)if((x+y)%2===0)g.fillRect(x*S,y*S,S,S);
   /* 角框 */
   g.strokeStyle=INK;g.lineWidth=8;g.lineCap='butt';
-  const k=34,L=78;
-  [[k,k,1,1],[W-k,k,-1,1],[k,H-k,1,-1],[W-k,H-k,-1,-1]].forEach(([x,y,dx,dy])=>{g.beginPath();g.moveTo(x+dx*L,y);g.lineTo(x,y);g.lineTo(x,y+dy*L);g.stroke()});
+  const k0=34,L=78;
+  [[k0,k0,1,1],[W-k0,k0,-1,1],[k0,H-k0,1,-1],[W-k0,H-k0,-1,-1]].forEach(([x,y,dx,dy])=>{g.beginPath();g.moveTo(x+dx*L,y);g.lineTo(x,y);g.lineTo(x,y+dy*L);g.stroke()});
   /* 標籤 */
-  {const LT=rkTheme(rankFull(st.n)),tx='2026  ・  U:NUS  ・  @unus__official';g.save();let _fs=42;g.font=FP(_fs);while(g.measureText(tx).width>912&&_fs>24){_fs--;g.font=FP(_fs)}g.lineJoin='round';g.strokeStyle=INK;g.lineWidth=9;g.strokeText(tx,84,106);g.shadowColor=LT.gc;g.shadowBlur=14;g.fillStyle=LT.ink;g.fillText(tx,84,106);g.restore()}
+  {const tx='2026  ・  U:NUS  ・  @unus__official';g.save();let _fs=38;g.font=FP(_fs);while(g.measureText(tx).width>912&&_fs>24){_fs--;g.font=FP(_fs)}g.lineJoin='round';g.strokeStyle=INK;g.lineWidth=9;g.strokeText(tx,84,106);g.shadowColor=RT.gc;g.shadowBlur=14;g.fillStyle=RT.ink;g.fillText(tx,84,106);g.restore()}
   /* 名字 */
   g.fillStyle=INK;
-  const nm=fit(g,state.name,FB,560,92,46,900);g.font=FB(parseInt(g.font.match(/(\d+)px/)[1]),900);g.textAlign='right';g.fillText(nm,996,226);g.textAlign='left';
-  g.font=FS(34);g.fillStyle=T.sub;g.fillText('今年總共 '+TOTAL+' 場活動',84,284);
-  /* 大數字 */
-  g.fillStyle=INK;g.font=FN(st.n>99?250:290,700);
-  const ns=String(st.n);g.fillText(ns,78,520);const nw=g.measureText(ns).width;const asc=Math.round(g.measureText(ns).actualBoundingBoxAscent);
-  g.font=FS8(96);g.fillText('場',78+nw+16,520);
-  g.font=FS(32);g.fillStyle=T.sub;g.fillText('有你的參與。',84,572);
-  drawRankLED(g,556,520-asc,440,asc,rankFull(st.n));
-  /* 黑色面板 */
-  const px=48,py=596,pw=984,ph=606;
-  g.fillStyle=T.panel;rr(g,px,py,pw,ph,26);g.fill();if(T.panelStroke){g.strokeStyle=T.panelStroke;g.lineWidth=3;g.stroke()}
-  g.fillStyle='#9AA0AD';g.font=FP(32);g.fillText('ATTENDANCE GRID',84,642);
-  /* 圖例 */
-  g.font=FB(22,500);
-  const tw=g.measureText('到場').width;
-  const tx=996-tw;
-  g.fillStyle='#9AA0AD';g.fillText('到場',tx,640);
-  const sx=tx-26;
-  [0,1,2,3].forEach(i=>{g.fillStyle=COL[MEM[i]];g.fillRect(sx+i*5,624,5,20)});
-  /* 月份列 */
-  const y0=662,pitch=44,sq=37,gap=8,x0=218;
+  const nm=fit(g,state.name,FB,560,84,46,900);g.font=FB(parseInt(g.font.match(/(\d+)px/)[1]),900);g.fillText(nm,84,204);
+  
+  /* 太陽光芒：中心黑圓＋12 片扇形 */
+  const cx=540,cy=738,hub=204,rIn=220,k=1.05,sec=Math.PI/6,cols=2,mg=sec*.10,sg=sec*.06,sw=(sec-2*mg-(cols-1)*sg)/cols,inset=3.6;
+  const maxRows=Math.max(1,...[1,2,3,4,5,6,7,8,9,10,11,12].map(m=>Math.ceil(EVA.filter(e=>e.m===m).length/cols)));
+  const th=Math.min(30,(492-rIn)/maxRows);   /* 場次再多也不會超出畫面 */
+  const offFill=THEME==='dark'?'rgba(242,243,247,.08)':'rgba(13,14,18,.10)',offLine=THEME==='dark'?'rgba(242,243,247,.30)':'rgba(13,14,18,.38)';
+  g.save();g.fillStyle=T.shadow;g.beginPath();g.arc(cx+7,cy+7,hub,0,Math.PI*2);g.fill();
+  g.fillStyle=T.panel;g.beginPath();g.arc(cx,cy,hub,0,Math.PI*2);g.fill();
+  g.lineWidth=2;g.strokeStyle='rgba(255,255,255,.14)';g.beginPath();g.arc(cx,cy,hub-10,0,Math.PI*2);g.stroke();g.restore();
   for(let m=1;m<=12;m++){
-    const y=y0+(m-1)*pitch;
-    drawMon(g,m,84,y+30,40,32,'#E6E8EE','#9AA0AD');
-    const evs=EVA.filter(e=>e.m===m);let got=0;
+    const evs=EVA.filter(e=>e.m===m),a0=-Math.PI/2+(m-1)*sec;let got=0;
     evs.forEach((e,i)=>{
-      const x=x0+i*(sq+gap);
+      const cc=i%cols,rw=Math.floor(i/cols),s0=a0+mg+cc*(sw+sg),s1=s0+sw,q0=rIn+rw*th+inset,q1=rIn+(rw+1)*th-inset;
       if(isOn(e)){
-        got++;
-        const n=e.members.length,w=sq/n;
-        e.members.forEach((nmem,j)=>{g.fillStyle=COL[nmem];g.fillRect(x+j*w,y,Math.ceil(w),sq)});
-        g.strokeStyle='rgba(255,255,255,.55)';g.lineWidth=2;g.strokeRect(x+1,y+1,sq-2,sq-2);
-      }else{
-        g.fillStyle='#1A1C23';g.fillRect(x,y,sq,sq);g.strokeStyle='#3B3E49';g.lineWidth=2;g.strokeRect(x+1,y+1,sq-2,sq-2);
-      }
+        got++;const n=e.members.length;
+        e.members.forEach((nmem,j)=>{g.fillStyle=COL[nmem];cardWedge(g,cx,cy,q0,q1,s0+j*sw/n,s0+(j+1)*sw/n+.002);g.fill()});
+        g.strokeStyle=INK;g.lineWidth=2.5;cardWedge(g,cx,cy,q0,q1,s0,s1);g.stroke();
+      }else{g.fillStyle=offFill;cardWedge(g,cx,cy,q0,q1,s0,s1);g.fill();g.strokeStyle=offLine;g.lineWidth=2;g.stroke()}
     });
-    g.textAlign='right';g.font=FP(38);g.fillStyle=got?'#B9C6A5':'#5A5E69';g.fillText(got+'/'+evs.length,996,y+30);g.textAlign='left';
+    /* 月份：英文簡寫、稱號色、有出席才亮 */
+    const am=a0+sec/2,lr=hub-30,lx=cx+Math.cos(am)*lr,ly=cy+Math.sin(am)*lr;
+    g.save();g.textAlign='center';g.font=FP(24);if('letterSpacing' in g)g.letterSpacing='1px';
+    if(got){g.fillStyle=R.c;g.shadowColor=RT.gc;g.shadowBlur=12;g.fillText(MABBR[m-1],lx+.5,ly+8);g.fillText(MABBR[m-1],lx+.5,ly+8)}
+    else{g.fillStyle=rkMix(R.c,[13,14,18],.36);g.fillText(MABBR[m-1],lx+.5,ly+8)}
+    g.restore();
   }
+  cardCenter(g,st,cx,cy,k);
   /* 底部四格 */
-  const cols=[84,330,576,822],cw=222;
+  const cols4=[84,330,576,822],cw=222,labY=1218,valY=1260;
   const vals=[
     ['去過城市',String(st.cities.length),' / '+CITIES.length],
     ['最常去',st.topCities.length?joinTop(st.topCities)+' ×'+st.topCityN:'—'],
@@ -1011,18 +1022,18 @@ async function drawCard(){
     ['最常見面月',null]
   ];
   vals.forEach(([lab,val,tot],i)=>{
-    g.fillStyle=T.sub;g.font=FB(22);g.fillText(lab,cols[i],1240);
+    g.fillStyle=T.sub;g.font=FB(22);g.fillText(lab,cols4[i],labY);
     if(val===null){
-      if(!st.topMonths.length){g.fillStyle=INK;g.font=FB(40,900);g.fillText('—',cols[i],1282);return}
+      if(!st.topMonths.length){g.fillStyle=INK;g.font=FB(40,900);g.fillText('—',cols4[i],valY);return}
       const ms=st.topMonths.slice(0,2),tail=' ×'+st.maxMon;
       let sc=1,tw2;
-      const measure=k=>{let w=0;ms.forEach(m=>{w+=drawMon(g,m,0,0,Math.round(46*k),Math.round(34*k),'#000','#000',false)+Math.round(14*k)});g.font=FB(Math.round(30*k),900);return w+g.measureText(tail).width};
+      const measure=kk=>{let w=0;ms.forEach(m=>{w+=drawMon(g,m,0,0,Math.round(46*kk),Math.round(34*kk),'#000','#000',false)+Math.round(14*kk)});g.font=FB(Math.round(30*kk),900);return w+g.measureText(tail).width};
       while((tw2=measure(sc))>cw&&sc>.5)sc-=.05;
-      let x=cols[i];ms.forEach(m=>{x+=drawMon(g,m,x,1282,Math.round(46*sc),Math.round(34*sc),INK,INK)+Math.round(14*sc)});
-      g.fillStyle=INK;g.font=FB(Math.round(30*sc),900);g.fillText(tail,x,1282);return}
+      let x=cols4[i];ms.forEach(m=>{x+=drawMon(g,m,x,valY,Math.round(46*sc),Math.round(34*sc),INK,INK)+Math.round(14*sc)});
+      g.fillStyle=INK;g.font=FB(Math.round(30*sc),900);g.fillText(tail,x,valY);return}
     g.fillStyle=INK;
-    if(tot){g.font=FB(40,900);const w1=g.measureText(val).width;g.fillText(val,cols[i],1282);g.font=FB(26,900);g.fillText(tot,cols[i]+w1,1282);return}
-    const t=fit(g,val,FB,cw,40,22,900);g.font=FB(parseInt(g.font.match(/(\d+)px/)[1]),900);g.fillText(t,cols[i],1282);
+    if(tot){g.font=FB(40,900);const w1=g.measureText(val).width;g.fillText(val,cols4[i],valY);g.font=FB(26,900);g.fillText(tot,cols4[i]+w1,valY);return}
+    const t=fit(g,val,FB,cw,40,22,900);g.font=FB(parseInt(g.font.match(/(\d+)px/)[1]),900);g.fillText(t,cols4[i],valY);
   });
   /* 頁腳：分隔線 + 成員色票 + 版權 */
   g.fillStyle=CP_LINE;g.fillRect(128,1302,822,1.5);
